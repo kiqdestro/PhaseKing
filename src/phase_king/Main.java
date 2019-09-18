@@ -2,7 +2,7 @@ package phase_king;
 
 import java.util.*;
 import java.io.*;
-import java.net.*
+import java.net.*;
 
 public class Main {
 
