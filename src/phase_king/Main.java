@@ -16,13 +16,13 @@ public class Main {
 		int id = input.nextInt();
 		input.close();
 		
-		MulticastSocket socket = new MulticastSocket(6789);
-		InetAddress group = InetAddress.getByName("224.0.0.2");
+		int socketNum = 6789;
+		String groupIP = "224.0.0.2";
 		
 		
 		Process process = new Process(value, id);
 		
-		MulticastPeer multicast = new MulticastPeer(socket, group);
+		MulticastPeer multicast = new MulticastPeer(socketNum, groupIP);
 		
 		
 	}
