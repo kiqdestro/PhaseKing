@@ -6,31 +6,50 @@ import java.net.*;
 
 public class MulticastPeer {
 	
-	int s;
+	// Attributes
+	int port;
 	String group = "";
 	
-	MulticastPeer(int sNumber, String groupIP) throws IOException {
-		
-		this.s = sNumber;
+	MulticastPeer(int port, String groupIP) {
+		this.port = port;
 		this.group = groupIP;
-		
 	};
 	
-	public void listen() {
-		
+	public String listen() {
+		MulticastSocket s = null;
+		String message = "";
+		try {
+			s = new MulticastSocket(this.port);
+			InetAddress group = InetAddress.getByName(this.group);
+			s.joinGroup(group);
+			
+			byte[] buffer = new byte[1000];
+			DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+			s.receive(messageIn);
+			
+			message = new String(messageIn.getData());
+			
+			System.out.println("Received: " + new String(messageIn.getData()));
+		} catch (SocketException e){System.out.println("Socket: " + e.getMessage());
+		} catch (IOException e){System.out.println("IO: " + e.getMessage());
+		} finally { if(s != null) s.close(); }
+		return message;
 	}
 	
-	public void talk(String message) throws IOException{
-		
-		MulticastSocket s = new MulticastSocket(this.s);
-		InetAddress group = InetAddress.getByName(this.group);
-		s.joinGroup(group);
-		
-		byte [] m = message.getBytes();
-		DatagramPacket messageOut = new DatagramPacket(m, m.length, group, this.s);
-		s.send(messageOut);
+	public void talk(String message) {
+		MulticastSocket s = null;
+		try {
+			s = new MulticastSocket(this.port);
+			InetAddress group = InetAddress.getByName(this.group);
+			s.joinGroup(group);
+			
+			byte [] m = message.getBytes();
+			DatagramPacket messageOut = new DatagramPacket(m, m.length, group, this.port);
+			s.send(messageOut);
+		} catch (SocketException e){System.out.println("Socket: " + e.getMessage());
+		} catch (IOException e){System.out.println("IO: " + e.getMessage());
+		} finally { if(s != null) s.close(); }
 	}
-
 }
 
 //public class MulticastPeer{
